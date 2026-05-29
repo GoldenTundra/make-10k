@@ -213,6 +213,55 @@
     ::-webkit-scrollbar-track { background: transparent; }
     ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
     .hidden { display: none !important; }
+
+    /* ── Mobile nav bar (hidden on desktop) ── */
+    .mobile-nav { display: none; background: var(--surface); border-top: 1px solid var(--border); flex-shrink: 0; }
+    .mnav-btn { flex: 1; padding: 10px 8px 8px; background: none; border: none; color: var(--muted); cursor: pointer; font-family: inherit; font-size: 9px; font-weight: bold; letter-spacing: 1px; text-transform: uppercase; display: flex; flex-direction: column; align-items: center; gap: 3px; transition: color 0.15s; -webkit-tap-highlight-color: transparent; }
+    .mnav-btn.active { color: var(--green); }
+    .mnav-icon { font-size: 20px; line-height: 1; }
+
+    /* ── Desktop transparent wrappers ── */
+    .hdr-main  { display: contents; }
+    .hdr-stats { display: contents; }
+
+    /* ── Mobile layout ── */
+    @media (max-width: 768px) {
+      body { height: 100dvh; }
+
+      .header { flex-direction: column; align-items: stretch; padding: 8px 12px; gap: 0; }
+      .hdr-main  { display: flex; align-items: center; gap: 10px; }
+      .hdr-stats { display: flex; justify-content: space-between; padding-top: 6px; margin-top: 6px; border-top: 1px solid var(--border); }
+      .hdr-divider { display: none; }
+      .spacer { display: none; }
+      .logo { font-size: 13px; }
+      .logo-sub { display: none; }
+      .hdr-value { font-size: 14px; }
+      .hdr-label { font-size: 9px; }
+      .timer { font-size: 20px; }
+
+      .market { grid-template-columns: repeat(2, 1fr); padding: 8px; gap: 8px; }
+      .price { font-size: 18px; }
+      .company-name { font-size: 11px; }
+
+      .right { width: 100%; border-left: none; border-top: 1px solid var(--border); }
+      .mobile-hidden { display: none !important; }
+
+      .mobile-nav { display: flex; }
+
+      .news-text { font-size: 14px; }
+
+      .mode-btn { padding: 10px 6px; font-size: 11px; }
+      .btn-trade { padding: 16px; font-size: 15px; }
+      .qbtn { width: 44px; height: 44px; font-size: 18px; }
+      .qty-input { font-size: 16px; }
+      .panel { padding: 12px; }
+      .trade-title { font-size: 16px; }
+      .trade-desc { font-size: 11px; }
+
+      .ov-box { padding: 24px 20px; }
+      .ov-logo { font-size: 28px; }
+      .prompt { font-size: 13px; }
+    }
   </style>
 </head>
 <body>
@@ -278,14 +327,18 @@
 
 <!-- ══ GAME UI ══ -->
 <div class="header">
-  <div><div class="logo">MAKE 10K</div><div class="logo-sub">Goblin Street Exchange</div></div>
-  <div class="hdr-divider"></div>
-  <div class="hdr-stat"><span class="hdr-label">Cash</span><span class="hdr-value green" id="hdr-cash">$10,000.00</span></div>
-  <div class="hdr-stat"><span class="hdr-label">Positions</span><span class="hdr-value" id="hdr-pos">$0.00</span></div>
-  <div class="hdr-stat"><span class="hdr-label">Net Worth</span><span class="hdr-value" id="hdr-total">$10,000.00</span></div>
-  <div class="hdr-stat"><span class="hdr-label">P&amp;L</span><span class="hdr-value" id="hdr-pnl">$0.00</span></div>
-  <div class="spacer"></div>
-  <div class="timer-wrap"><div class="timer-label">Time Left</div><div class="timer" id="timer">10:00</div></div>
+  <div class="hdr-main">
+    <div><div class="logo">MAKE 10K</div><div class="logo-sub">Goblin Street Exchange</div></div>
+    <div class="spacer"></div>
+    <div class="timer-wrap"><div class="timer-label">Time Left</div><div class="timer" id="timer">10:00</div></div>
+  </div>
+  <div class="hdr-stats">
+    <div class="hdr-divider"></div>
+    <div class="hdr-stat"><span class="hdr-label">Cash</span><span class="hdr-value green" id="hdr-cash">$10,000.00</span></div>
+    <div class="hdr-stat"><span class="hdr-label">Positions</span><span class="hdr-value" id="hdr-pos">$0.00</span></div>
+    <div class="hdr-stat"><span class="hdr-label">Net Worth</span><span class="hdr-value" id="hdr-total">$10,000.00</span></div>
+    <div class="hdr-stat"><span class="hdr-label">P&amp;L</span><span class="hdr-value" id="hdr-pnl">$0.00</span></div>
+  </div>
 </div>
 <div class="progress-bar-wrap"><div class="progress-bar-fill" id="progress-fill" style="width:0%"></div></div>
 
@@ -303,6 +356,11 @@
 <div class="news">
   <span class="news-badge">NEWS</span>
   <span class="news-text" id="news-text">Markets open. Good luck.</span>
+</div>
+<div class="mobile-nav" id="mobile-nav">
+  <button class="mnav-btn active" id="mnav-market" onclick="mobileNav('market')"><span class="mnav-icon">📈</span>MARKET</button>
+  <button class="mnav-btn"        id="mnav-trade"  onclick="mobileNav('trade')"><span class="mnav-icon">💹</span>TRADE</button>
+  <button class="mnav-btn"        id="mnav-pf"     onclick="mobileNav('pf')"><span class="mnav-icon">📊</span>PORTFOLIO</button>
 </div>
 <div class="toast" id="toast"></div>
 
@@ -608,6 +666,26 @@ function checkMarginCalls() {
 // ════════════════════════════════
 //  TRADE MODE
 // ════════════════════════════════
+// ════════════════════════════════
+//  MOBILE NAV
+// ════════════════════════════════
+function isMobile() { return window.matchMedia('(max-width:768px)').matches; }
+
+function mobileNav(view) {
+  ['market','trade','pf'].forEach(v => document.getElementById('mnav-'+v)?.classList.toggle('active', v===view));
+  if (!isMobile()) return;
+  const market = document.getElementById('market');
+  const right  = document.querySelector('.right');
+  if (view === 'market') {
+    market.classList.remove('mobile-hidden');
+    right.classList.add('mobile-hidden');
+  } else {
+    market.classList.add('mobile-hidden');
+    right.classList.remove('mobile-hidden');
+    switchTab(view === 'pf' ? 'pf' : 'trade');
+  }
+}
+
 function setTradeMode(mode) {
   tradeMode=mode;
   if (currentTab==='trade') renderTradePanel();
@@ -621,7 +699,8 @@ function selectStock(ticker) {
   document.querySelectorAll('.card').forEach(c=>c.classList.remove('selected'));
   const card=document.getElementById('card-'+ticker);
   if (card) card.classList.add('selected');
-  if (currentTab==='trade') renderTradePanel();
+  if (isMobile()) { mobileNav('trade'); }
+  else if (currentTab==='trade') renderTradePanel();
 }
 
 function renderTradePanel() {
