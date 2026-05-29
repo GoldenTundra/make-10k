@@ -75,7 +75,7 @@
     }
     .diff-btn small { font-size: 9px; font-weight: normal; letter-spacing: 0; color: var(--muted); }
     .diff-btn.sel-easy   { border-color: var(--green);  color: var(--green);  background: rgba(0,230,118,0.08); }
-    .diff-btn.sel-medium { border-color: var(--yellow); color: var(--yellow); background: rgba(255,193,7,0.08); }
+    .diff-btn.sel-normal { border-color: var(--yellow); color: var(--yellow); background: rgba(255,193,7,0.08); }
     .diff-btn.sel-hard   { border-color: var(--red);    color: var(--red);    background: rgba(255,77,106,0.08); }
 
     /* ── Progress bar ── */
@@ -274,8 +274,8 @@
 
     <div class="diff-row">
       <button class="diff-btn" id="diff-easy"   onclick="setDiff('easy')">EASY<br><small>$15k · 12 min</small></button>
-      <button class="diff-btn sel-medium" id="diff-medium" onclick="setDiff('medium')">MEDIUM<br><small>$18k · 10 min</small></button>
-      <button class="diff-btn" id="diff-hard"   onclick="setDiff('hard')">HARD<br><small>$20k · 10 min</small></button>
+      <button class="diff-btn sel-normal" id="diff-normal" onclick="setDiff('normal')">NORMAL<br><small>$20k · 10 min</small></button>
+      <button class="diff-btn" id="diff-hard"   onclick="setDiff('hard')">HARD<br><small>$25k · 10 min</small></button>
     </div>
 
     <div class="ov-stat-grid">
@@ -370,14 +370,14 @@
 // ════════════════════════════════
 const DIFFS = {
   easy:   { winTarget:15000, duration:720,  positiveBias:0.75 },
-  medium: { winTarget:18000, duration:600,  positiveBias:0.58 },
-  hard:   { winTarget:20000, duration:600,  positiveBias:0.44 },
+  normal: { winTarget:20000, duration:600,  positiveBias:0.58 },
+  hard:   { winTarget:25000, duration:600,  positiveBias:0.44 },
 };
-let selDiff = 'medium';
+let selDiff = 'normal';
 
 function setDiff(d) {
   selDiff = d;
-  ['easy','medium','hard'].forEach(x => {
+  ['easy','normal','hard'].forEach(x => {
     const b = document.getElementById('diff-'+x);
     if (b) b.className = 'diff-btn' + (x===d ? ' sel-'+x : '');
   });
@@ -388,7 +388,7 @@ function setDiff(d) {
 // ════════════════════════════════
 //  LOCAL STORAGE
 // ════════════════════════════════
-const LS_KEY = 'make10k_v2';
+const LS_KEY = 'make10k_v3';
 const STARTING_CASH = 10_000;
 const HISTORY_LEN   = 60;
 
@@ -1195,7 +1195,7 @@ function startGame() {
 }
 
 function resumeGame(session) {
-  selDiff=session.diff||'medium';
+  selDiff=session.diff||'normal';
   cash=session.cash;
   timeLeft=session.timeLeft;
   nextOrdId=session.nextOrdId||1;
