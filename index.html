@@ -119,6 +119,9 @@
     .price { font-size: 22px; font-weight: bold; }
     .chg  { font-size: 13px; font-weight: bold; }
     .green  { color: var(--green); } .red { color: var(--red); } .yellow { color: var(--yellow); }
+    .open-row { display: flex; gap: 5px; align-items: center; margin-bottom: 4px; }
+    .open-label { font-size: 9px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; }
+    .open-chg { font-size: 11px; font-weight: bold; }
     canvas.spark { width: 100%; height: 48px; display: block; }
     .holding-tag { margin-top: 8px; font-size: 11px; display: flex; flex-direction: column; gap: 3px; padding-top: 8px; border-top: 1px solid var(--border); }
     .ht-row { display: flex; justify-content: space-between; }
@@ -512,7 +515,8 @@ const limitOrders = [];
 let nextOrdId = 1;
 
 const history = {};
-COMPANIES.forEach(c => { history[c.ticker] = [c.price]; });
+const openPrices = {};
+COMPANIES.forEach(c => { history[c.ticker] = [c.price]; openPrices[c.ticker] = c.price; });
 
 let gameActive = false, timeLeft = 600;
 let timerInterval = null, priceInterval = null, newsTimeout = null;
@@ -581,6 +585,7 @@ function buildMarket() {
       <div class="card-top"><span class="ticker-sym" style="color:${c.color}">${c.ticker}</span><span class="sector-tag">${c.sector}</span></div>
       <div class="company-name">${c.name}</div>
       <div class="price-row"><span class="price green" id="p-${c.ticker}">${fmt(c.price)}</span><span class="chg green" id="ch-${c.ticker}">+0.00%</span></div>
+      <div class="open-row"><span class="open-label">open</span><span class="open-chg green" id="oc-${c.ticker}">+0.00%</span></div>
       <canvas class="spark" id="sp-${c.ticker}" width="240" height="48"></canvas>
       <div id="ht-${c.ticker}"></div>`;
     el.appendChild(card);
@@ -598,6 +603,9 @@ function refreshCard(ticker) {
   document.getElementById('p-'+ticker).className='price '+(up?'green':'red');
   document.getElementById('ch-'+ticker).textContent=(up?'+':'')+pct.toFixed(2)+'%';
   document.getElementById('ch-'+ticker).className='chg '+(up?'green':'red');
+  const openPct=((c.price-openPrices[ticker])/openPrices[ticker])*100, openUp=openPct>=0;
+  document.getElementById('oc-'+ticker).textContent=(openUp?'+':'')+openPct.toFixed(2)+'%';
+  document.getElementById('oc-'+ticker).className='open-chg '+(openUp?'green':'red');
   drawSpark(document.getElementById('sp-'+ticker), hist);
 
   const h=longs[ticker], h2=longs2x[ticker], s=shorts[ticker];
