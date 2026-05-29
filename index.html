@@ -79,8 +79,9 @@
     .diff-btn.sel-hard   { border-color: var(--red);    color: var(--red);    background: rgba(255,77,106,0.08); }
 
     /* ── Progress bar ── */
-    .progress-bar-wrap { height: 12px; background: var(--surface2); flex-shrink: 0; }
+    .progress-bar-wrap { height: 12px; background: var(--surface2); flex-shrink: 0; position: relative; }
     .progress-bar-fill { height: 100%; background: var(--blue); transition: width 0.5s ease; max-width: 100%; }
+    .progress-target { position: absolute; right: 6px; top: 50%; transform: translateY(-50%); font-size: 9px; color: var(--muted); letter-spacing: 0.5px; pointer-events: none; }
 
     /* ── Header ── */
     .header {
@@ -344,7 +345,7 @@
     <div class="spacer"></div>
   </div>
 </div>
-<div class="progress-bar-wrap"><div class="progress-bar-fill" id="progress-fill" style="width:0%"></div></div>
+<div class="progress-bar-wrap"><div class="progress-bar-fill" id="progress-fill" style="width:0%"></div><span class="progress-target" id="progress-target">$18,000</span></div>
 
 <div class="main">
   <div class="market" id="market"></div>
@@ -387,6 +388,7 @@ function setDiff(d) {
   });
   document.getElementById('intro-goal').textContent = '$' + DIFFS[d].winTarget.toLocaleString();
   document.getElementById('intro-time').textContent = Math.floor(DIFFS[d].duration/60) + ':00';
+  document.getElementById('progress-target').textContent = '$' + DIFFS[d].winTarget.toLocaleString();
 }
 
 // ════════════════════════════════
@@ -638,6 +640,7 @@ function refreshHeader() {
   const fill=document.getElementById('progress-fill');
   fill.style.width=pct+'%';
   fill.style.background=pct>=80?'#00e676':pct>=40?'#ffc107':'#4da6ff';
+  document.getElementById('progress-target').textContent='$'+tgt.toLocaleString();
 }
 
 // ════════════════════════════════
