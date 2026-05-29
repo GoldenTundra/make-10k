@@ -278,7 +278,7 @@
     <div class="ov-sub">Goblin Street Exchange</div>
 
     <div class="diff-row">
-      <button class="diff-btn" id="diff-easy"   onclick="setDiff('easy')">EASY<br><small>$15k · 12 min</small></button>
+      <button class="diff-btn" id="diff-easy"   onclick="setDiff('easy')">EASY<br><small>$15k · 10 min</small></button>
       <button class="diff-btn sel-normal" id="diff-normal" onclick="setDiff('normal')">NORMAL<br><small>$20k · 10 min</small></button>
       <button class="diff-btn" id="diff-hard"   onclick="setDiff('hard')">HARD<br><small>$25k · 10 min</small></button>
     </div>
@@ -379,7 +379,7 @@
 //  DIFFICULTY
 // ════════════════════════════════
 const DIFFS = {
-  easy:   { winTarget:15000, duration:720,  positiveBias:0.75 },
+  easy:   { winTarget:15000, duration:600,  positiveBias:0.75 },
   normal: { winTarget:20000, duration:600,  positiveBias:0.58 },
   hard:   { winTarget:25000, duration:600,  positiveBias:0.44 },
 };
