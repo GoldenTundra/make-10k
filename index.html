@@ -610,11 +610,7 @@ function checkMarginCalls() {
 // ════════════════════════════════
 function setTradeMode(mode) {
   tradeMode=mode;
-  ['long','long2x','short'].forEach(m=>{
-    const b=document.getElementById('mode-'+m);
-    if (b) b.className=`mode-btn m-${m}`+(m===mode?' active':'');
-  });
-  updateSummary();
+  if (currentTab==='trade') renderTradePanel();
 }
 
 // ════════════════════════════════
