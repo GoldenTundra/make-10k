@@ -834,11 +834,13 @@ function updateSummary() {
     if (bc) bc.disabled=(longs[selectedTick]?.shares||0)<qty||qty<1;
   } else if (tradeMode==='long2x') {
     const margin=total*0.5;
+    const tickInterest=margin*MARGIN_INTEREST_RATE;
     el.innerHTML=`
       <div class="kv"><span class="k">Price</span><span>${fmt(c.price)}</span></div>
       <div class="kv"><span class="k">Controls (2×)</span><span>${fmt(total)}</span></div>
       <div class="kv"><span class="k" style="color:var(--yellow)">Margin (50%)</span><span style="color:var(--yellow)">${fmt(margin)}</span></div>
-      <div class="kv"><span class="k">Cash After</span><span class="${cash-margin>=0?'':'red'}">${fmt(cash-margin)}</span></div>`;
+      <div class="kv"><span class="k">Cash After</span><span class="${cash-margin>=0?'':'red'}">${fmt(cash-margin)}</span></div>
+      <div class="kv"><span class="k" style="color:var(--red)">Borrow fee/tick</span><span style="color:var(--red)">-${fmt(tickInterest)}</span></div>`;
     const bo=document.getElementById('btn-open'), bc=document.getElementById('btn-close');
     if (bo) bo.disabled=margin>cash||qty<1;
     if (bc) bc.disabled=(longs2x[selectedTick]?.shares||0)<qty||qty<1;
@@ -1139,12 +1141,22 @@ function toast(msg, color) {
 // ════════════════════════════════
 //  PRICE ENGINE
 // ════════════════════════════════
+const MARGIN_INTEREST_RATE = 0.0005; // 0.05% per tick on borrowed capital (~15% over full game)
+
+function chargeMarginInterest() {
+  let interest = 0;
+  Object.values(longs2x).forEach(h => { interest += h.margin * MARGIN_INTEREST_RATE; });
+  if (interest === 0) return;
+  cash -= interest;
+}
+
 function tickPrices() {
   COMPANIES.forEach(c=>{
     c.price=Math.max(0.01, c.price*(1+(Math.random()-0.5)*3*c.vol));
     const h=history[c.ticker]; h.push(c.price); if(h.length>HISTORY_LEN)h.shift();
     refreshCard(c.ticker);
   });
+  chargeMarginInterest();
   refreshHeader();
   checkMarginCalls();
   checkLimitOrders();
