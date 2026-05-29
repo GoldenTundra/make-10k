@@ -79,10 +79,9 @@
     .diff-btn.sel-hard   { border-color: var(--red);    color: var(--red);    background: rgba(255,77,106,0.08); }
 
     /* ── Progress bar ── */
-    .progress-row { display: flex; align-items: center; flex-shrink: 0; }
-    .progress-bar-wrap { flex: 1; height: 12px; background: var(--surface2); }
+    .progress-bar-wrap { height: 12px; background: var(--surface2); flex-shrink: 0; }
     .progress-bar-fill { height: 100%; background: var(--blue); transition: width 0.5s ease; max-width: 100%; }
-    .progress-target { font-size: 10px; color: var(--text); white-space: nowrap; padding: 0 8px; flex-shrink: 0; }
+    .hdr-goal-stat { order: 99; }
 
     /* ── Header ── */
     .header {
@@ -335,6 +334,11 @@
 <div class="header">
   <div class="hdr-main">
     <div><div class="logo">MAKE 10K</div><div class="logo-sub">Goblin Street Exchange</div></div>
+    <div class="hdr-stat hdr-goal-stat">
+      <span class="hdr-label">Goal</span>
+      <span class="hdr-value green" id="hdr-goal">$18,000</span>
+      <span class="hdr-label" id="hdr-diff" style="color:var(--yellow)">Difficulty: Normal</span>
+    </div>
     <div class="timer-wrap"><div class="timer-label">Time Left</div><div class="timer" id="timer">10:00</div></div>
   </div>
   <div class="hdr-stats">
@@ -346,7 +350,7 @@
     <div class="spacer"></div>
   </div>
 </div>
-<div class="progress-row"><div class="progress-bar-wrap"><div class="progress-bar-fill" id="progress-fill" style="width:0%"></div></div><span class="progress-target" id="progress-target">$18,000</span></div>
+<div class="progress-bar-wrap"><div class="progress-bar-fill" id="progress-fill" style="width:0%"></div></div>
 
 <div class="main">
   <div class="market" id="market"></div>
@@ -389,7 +393,10 @@ function setDiff(d) {
   });
   document.getElementById('intro-goal').textContent = '$' + DIFFS[d].winTarget.toLocaleString();
   document.getElementById('intro-time').textContent = Math.floor(DIFFS[d].duration/60) + ':00';
-  document.getElementById('progress-target').textContent = '$' + DIFFS[d].winTarget.toLocaleString();
+  document.getElementById('hdr-goal').textContent = '$' + DIFFS[d].winTarget.toLocaleString();
+  const diffEl = document.getElementById('hdr-diff');
+  diffEl.textContent = 'Difficulty: ' + d.charAt(0).toUpperCase() + d.slice(1);
+  diffEl.style.color = d==='easy' ? 'var(--green)' : d==='hard' ? 'var(--red)' : 'var(--yellow)';
 }
 
 // ════════════════════════════════
@@ -641,7 +648,7 @@ function refreshHeader() {
   const fill=document.getElementById('progress-fill');
   fill.style.width=pct+'%';
   fill.style.background=pct>=80?'#00e676':pct>=40?'#ffc107':'#4da6ff';
-  document.getElementById('progress-target').textContent='$'+tgt.toLocaleString();
+  document.getElementById('hdr-goal').textContent='$'+tgt.toLocaleString();
 }
 
 // ════════════════════════════════
