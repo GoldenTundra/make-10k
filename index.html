@@ -229,7 +229,7 @@
       body { height: 100dvh; }
 
       .header { flex-direction: column; align-items: stretch; padding: 8px 12px; gap: 0; }
-      .hdr-main  { display: flex; align-items: center; gap: 10px; }
+      .hdr-main  { display: flex; align-items: center; justify-content: space-between; }
       .hdr-stats { display: flex; justify-content: space-between; padding-top: 6px; margin-top: 6px; border-top: 1px solid var(--border); }
       .hdr-divider { display: none; }
       .spacer { display: none; }
@@ -1276,6 +1276,7 @@ function showAlreadyPlayed(session) {
 buildMarket();
 refreshHeader();
 renderTimer();
+mobileNav('market');
 const session=loadSession();
 if (session?.result==='active') resumeGame(session);
 else if (session) showAlreadyPlayed(session);
